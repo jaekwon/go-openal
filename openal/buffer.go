@@ -126,6 +126,16 @@ func (self Buffer) SetData(format int32, data []byte, frequency int32) {
 		C.ALsizei(len(data)), C.ALsizei(frequency))
 }
 
+func (self Buffer) SetDataInt(format int32, data []int16, frequency int32) {
+	C.alBufferData(C.ALuint(self), C.ALenum(format), unsafe.Pointer(&data[0]),
+		C.ALsizei(len(data)*2), C.ALsizei(frequency))
+}
+
+func (self Buffer) SetDataUInt(format int32, data []uint16, frequency int32) {
+	C.alBufferData(C.ALuint(self), C.ALenum(format), unsafe.Pointer(&data[0]),
+		C.ALsizei(len(data)*2), C.ALsizei(frequency))
+}
+
 // NewBuffer() creates a single buffer.
 // Convenience function, see NewBuffers().
 func NewBuffer() Buffer {
