@@ -18,6 +18,7 @@
 // lot higher, each of those calls triggers an allocation.
 package openal
 
+//#cgo windows LDFLAGS: -lopenal
 //#cgo linux LDFLAGS: -lopenal
 //#cgo darwin LDFLAGS: -framework OpenAL
 //#include <stdlib.h>
@@ -26,7 +27,7 @@ package openal
 ALCdevice *walcOpenDevice(const char *devicename) {
 	return alcOpenDevice(devicename);
 }
-const ALCchar *alcGetString( ALCdevice *device, ALCenum param );
+//const ALCchar *alcGetString( ALCdevice *device, ALCenum param );
 void walcGetIntegerv(ALCdevice *device, ALCenum param, ALCsizei size, void *data) {
 	alcGetIntegerv(device, param, size, data);
 }
