@@ -24,6 +24,16 @@ const (
 	alSize      = 0x2004
 )
 
+type Format uint32
+
+// Format of sound samples passed to Buffer.SetData().
+const (
+	FormatMono8    = Format(0x1100)
+	FormatMono16   = Format(0x1101)
+	FormatStereo8  = Format(0x1102)
+	FormatStereo16 = Format(0x1103)
+)
+
 // NewBuffers() creates n fresh buffers.
 // Renamed, was GenBuffers.
 func NewBuffers(n int) (buffers []Buffer) {
@@ -107,31 +117,23 @@ func (self Buffer) getiv(param int32, values []int32) {
 	C.walGetBufferiv(C.ALuint(self), C.ALenum(param), unsafe.Pointer(&values[0]))
 }
 
-// Format of sound samples passed to Buffer.SetData().
-const (
-	FormatMono8    = 0x1100
-	FormatMono16   = 0x1101
-	FormatStereo8  = 0x1102
-	FormatStereo16 = 0x1103
-)
-
 // SetData() specifies the sample data the buffer should use.
 // For FormatMono16 and FormatStereo8 the data slice must be a
 // multiple of two bytes long; for FormatStereo16 the data slice
 // must be a multiple of four bytes long. The frequency is given
 // in Hz.
 // Renamed, was BufferData.
-func (self Buffer) SetData(format int32, data []byte, frequency int32) {
+func (self Buffer) SetData(format Format, data []byte, frequency int32) {
 	C.alBufferData(C.ALuint(self), C.ALenum(format), unsafe.Pointer(&data[0]),
 		C.ALsizei(len(data)), C.ALsizei(frequency))
 }
 
-func (self Buffer) SetDataInt(format int32, data []int16, frequency int32) {
+func (self Buffer) SetDataInt(format Format, data []int16, frequency int32) {
 	C.alBufferData(C.ALuint(self), C.ALenum(format), unsafe.Pointer(&data[0]),
 		C.ALsizei(len(data)*2), C.ALsizei(frequency))
 }
 
-func (self Buffer) SetDataUInt(format int32, data []uint16, frequency int32) {
+func (self Buffer) SetDataUInt(format Format, data []uint16, frequency int32) {
 	C.alBufferData(C.ALuint(self), C.ALenum(format), unsafe.Pointer(&data[0]),
 		C.ALsizei(len(data)*2), C.ALsizei(frequency))
 }
