@@ -106,43 +106,44 @@ func (self Listener) GetGain() (gain float32) {
 }
 
 // Convenience method, see Listener.Setfv().
-func (self Listener) SetPosition(vector *Vector) {
-	self.Set3f(AlPosition, vector[x], vector[y], vector[z])
+func (self Listener) SetPosition(x, y, z float32) {
+	self.Set3f(AlPosition, x, y, z)
 }
 
 // Convenience method, see Listener.Getfv().
-func (self Listener) GetPosition(result *Vector) {
-	result[x], result[y], result[z] = self.Get3f(AlPosition)
+func (self Listener) Position() (x, y, z float32) {
+	return self.Get3f(AlPosition)
 }
 
 // Convenience method, see Listener.Setfv().
-func (self Listener) SetVelocity(vector *Vector) {
-	self.Set3f(AlVelocity, vector[x], vector[y], vector[z])
+func (self Listener) SetVelocity(x, y, z float32) {
+	self.Set3f(AlVelocity, x, y, z)
 }
 
 // Convenience method, see Listener.Getfv().
-func (self Listener) GetVelocity(result *Vector) {
-	result[x], result[y], result[z] = self.Get3f(AlVelocity)
+func (self Listener) Velocity() (x, y, z float32) {
+	return self.Get3f(AlVelocity)
 }
 
 // Convenience method, see Listener.Setfv().
-func (self Listener) SetOrientation(at *Vector, up *Vector) {
-	tempSlice[0] = at[x]
-	tempSlice[1] = at[y]
-	tempSlice[2] = at[z]
-	tempSlice[3] = up[x]
-	tempSlice[4] = up[y]
-	tempSlice[5] = up[z]
+func (self Listener) SetOrientation(at_x, at_y, at_z float32, up_x, up_y, up_z float32) {
+	tempSlice[0] = at_x
+	tempSlice[1] = at_y
+	tempSlice[2] = at_z
+	tempSlice[3] = up_x
+	tempSlice[4] = up_y
+	tempSlice[5] = up_z
 	self.Setfv(AlOrientation, tempSlice)
 }
 
 // Convenience method, see Listener.Getfv().
-func (self Listener) GetOrientation(resultAt, resultUp *Vector) {
+func (self Listener) Orientation() (at_x, at_y, at_z float32, up_x, up_y, up_z float32) {
 	self.Getfv(AlOrientation, tempSlice)
-	resultAt[x] = tempSlice[0]
-	resultAt[y] = tempSlice[1]
-	resultAt[z] = tempSlice[2]
-	resultUp[x] = tempSlice[3]
-	resultUp[y] = tempSlice[4]
-	resultUp[z] = tempSlice[5]
+	at_x = tempSlice[0]
+	at_y = tempSlice[1]
+	at_z = tempSlice[2]
+	up_x = tempSlice[3]
+	up_y = tempSlice[4]
+	up_z = tempSlice[5]
+	return
 }

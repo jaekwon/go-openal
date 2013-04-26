@@ -12,16 +12,7 @@
 
 package openal
 
-// Convenience Interface.
-type Vector [3]float32
-
 var tempSlice = make([]float32, 6)
-const (
-	x = iota
-	y
-	z
-)
-
 
 // Convenience function, see GetInteger().
 func GetDistanceModel() int32 {
