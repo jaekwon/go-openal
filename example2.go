@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	mic := openal.CaptureOpenDevice("", 22050, openal.FormatMono16, 22050/2)
+	mic := openal.CaptureOpenDevice("", 22050, openal.FormatMono16, 22050*2)
 	mic.CaptureStart()
 
 	device := openal.OpenDevice("")
@@ -26,16 +26,41 @@ func main() {
 	source.SetVelocity(0, 0, 0)
 	source.SetLooping(false)
 
-	for i := 0; i < 1000000; i++ {
-		buf := mic.CaptureSamples(22050 / 2)
-		fmt.Printf("%X\n", buf)
-		fmt.Println(len(buf))
-		buffer := openal.NewBuffer()
-		buffer.SetData(openal.FormatMono16, buf, 22050/2)
-		source.SetBuffer(buffer)
-		source.Play()
-		for source.State() == openal.Playing {
-			//loop long enough to let the wave file finish
+	buffersAll := openal.NewBuffers(10)
+	buffersFree := make([]openal.Buffer, len(buffersAll))
+	copy(buffersFree, buffersAll)
+
+	for {
+		// Get any free buffers
+		buffersProcessed := source.BuffersProcessed()
+		if buffersProcessed > 0 {
+			buffersNewFree := make([]openal.Buffer, buffersProcessed)
+			source.UnqueueBuffers(buffersNewFree)
+			buffersFree = append(buffersFree, buffersNewFree...)
+		}
+		if len(buffersFree) == 0 {
+			continue
+		}
+
+		//fmt.Println("queued:", source.BuffersQueued())
+		//fmt.Println("processed:", source.BuffersProcessed())
+		//fmt.Println("captured:", mic.CapturedSamples())
+
+		captureSize := uint32(512)
+		if mic.CapturedSamples() >= captureSize {
+			inputBytes := mic.CaptureSamples(captureSize)
+			buffer := buffersFree[len(buffersFree)-1]
+			buffersFree = buffersFree[:len(buffersFree)-1]
+			buffer.SetData(openal.FormatMono16, inputBytes, 22050)
+			source.QueueBuffer(buffer)
+
+			// If we have enough buffers, start playing
+			if source.State() != openal.Playing {
+				if source.BuffersQueued() > 2 {
+					fmt.Println("Start playing")
+					source.Play()
+				}
+			}
 		}
 	}
 	fmt.Println(source.State())

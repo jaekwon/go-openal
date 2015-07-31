@@ -167,6 +167,10 @@ func (self *CaptureDevice) CaptureSamples(size uint32) (data []byte) {
 	return
 }
 
+func (self *CaptureDevice) CapturedSamples() (size uint32) {
+	return uint32(self.GetInteger(CaptureSamples))
+}
+
 ///// Context ///////////////////////////////////////////////////////
 
 // Context encapsulates the state of a given instance
